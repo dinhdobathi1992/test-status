@@ -64,4 +64,4 @@ jobs:
         curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           -X POST "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/requested_reviewers" \
-          -d '{"reviewers": ["dinhdobathi1992", "dinhdobathi3"]}'
+          -d '{"reviewers": ["hhoangnguyen3018", "dinhdobathi3"]}'
