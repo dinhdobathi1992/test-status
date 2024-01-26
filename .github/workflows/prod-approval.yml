@@ -28,7 +28,7 @@ jobs:
         echo "$changed_files"
 
         echo "::set-output name=changed_files::$changed_files"
-
+        
     - name: Notify if specific file changed
       if: ${{ contains(steps.file_changed.outputs.changed_files, 'prod') }}
       run: echo "File 'path/to/your/file' has changed."
@@ -55,9 +55,10 @@ jobs:
           echo "::set-output name=changed::false"
         fi
 
-
+    - name: Notify if specific file changed
+      run: echo ${{ steps.file_changed2.outputs.changed }}
     - name: Request approvals
-      if: steps.file_changed.outputs.changed == 'true'
+      if: steps.file_changed2.outputs.changed == 'true'
       run: |
         PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
         curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
