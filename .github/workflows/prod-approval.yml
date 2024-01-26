@@ -12,9 +12,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v1
-      with:
-        fetch-depth: 0
+      uses: actions/checkout@v2
 
     - name: Set up Git credentials
       run: |
@@ -26,10 +24,10 @@ jobs:
       run: |
         echo ${{ github.repository }}
         echo ${{ github.ref }}
-        echo ${{ github.before }}
-        echo ${{ github.after }}
-        git checkout --force ${{ github.ref }}
-        changed_files=$(git diff --name-only origin/main)
+        echo ${{ github.event.before }}
+        echo ${{ github.event.after }}
+        #git checkout --force ${{ github.ref }}
+        changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
         echo "Changed files:"
         echo "$changed_files"
         
