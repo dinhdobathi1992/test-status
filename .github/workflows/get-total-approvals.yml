@@ -28,6 +28,17 @@ jobs:
           echo "REVIEW_COUNT=$REVIEWS" >> $GITHUB_ENV
     - name: Use the review count
       run: echo "The review count is ${{ env.REVIEW_COUNT }}"
+
+    - name: Add Comment
+      run: |
+        PR_NUMBER=${{ github.event.number }}
+        COMMENT="The review count is ${{ env.REVIEW_COUNT }}"
+
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          "https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments" \
+          -d '{"body":"'"${COMMENT}"'"}'
     - name: Conditional Self-Fail
       run: |
         if [ $REVIEW_COUNT -lt 2 ]; then
