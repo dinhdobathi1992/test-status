@@ -20,11 +20,12 @@ jobs:
 
     - name: Get pull request information
       id: get_pr_info
-      run: echo "PR_INFO=$(curl -sSL -H \"Authorization: Bearer ${{ secrets.ACTION_TOKEN }}\" \"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}\")" >> $GITHUB_ENV
+      run: |
+          REVIEW=$(curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" -H "Accept: application/vnd.github.v3+json"  "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews" | jq length )
+          echo "Number of reviews: $REVIEWS"
+    - name: Set output variable
+      id: set_output
+      run: echo "REVIEW_COUNT=$REVIEWS" >> $GITHUB_ENV
 
-    - name: Extract number of approvals
-      id: extract_approvals
-      run: echo "APPROVALS=$(echo $PR_INFO | jq --raw-output '.reviews[] | select(.state == \"APPROVED\") | .user.login' | sort -u | wc -l)" >> $GITHUB_ENV
-
-    - name: Display number of approvals
-      run: echo "Number of approvals: $APPROVALS"
+    - name: Use the review count
+      run: echo "The review count is ${{ env.REVIEW_COUNT }}"
