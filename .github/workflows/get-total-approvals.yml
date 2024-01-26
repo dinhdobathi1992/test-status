@@ -25,7 +25,7 @@ jobs:
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }} " \
           -H "X-GitHub-Api-Version: 2022-11-28" \
-          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews | jq 'map(select(.state == "COMMENTED"))'
+          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews | jq 'map(select(.state == "COMMENTED")) | length'
           
           REVIEWS=$(curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" -H "Accept: application/vnd.github.v3+json"  "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews"  | jq '. | select(.state == "COMMENTED") | length' )
           echo "Number of reviews: $REVIEWS"
