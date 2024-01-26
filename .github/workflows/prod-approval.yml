@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v1
 
     - name: Set up Git credentials
       run: |
@@ -22,7 +22,7 @@ jobs:
       id: file_changed
       run: |
         base_branch="main"  # Replace with the base branch name
-        changed_files=$(git diff --name-only $base_branch ${{ github.event.before }})
+        changed_files=$(git diff --name-only origin/main HEAD )
 
         echo "Changed files:"
         echo "$changed_files"
