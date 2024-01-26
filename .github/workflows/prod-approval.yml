@@ -30,9 +30,12 @@ jobs:
         echo "::set-output name=changed_files::$changed_files"
         
     - name: Notify if specific file changed
+      id: check_changes
       if: ${{ contains(steps.file_changed.outputs.changed_files, 'prod') }}
-      run: echo "File 'path/to/your/file' has changed."
-      
+      run: |
+        echo "File 'prod' has changed."
+        echo "::set-output name=changed::true"
+        echo "changed=true" >> $GITHUB_OUTPUT
     - name: Check if the file is modified
       id: file_changed2
       run: |
@@ -56,9 +59,9 @@ jobs:
         fi
 
     - name: Notify if specific file changed
-      run: echo ${{ steps.file_changed2.outputs.changed }}
+      run: echo ${{ steps.check_changes.outputs.changed }}
     - name: Request approvals
-      if: steps.file_changed2.outputs.changed == 'true'
+      if: steps.check_changes.outputs.changed == 'true'
       run: |
         PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
         curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
