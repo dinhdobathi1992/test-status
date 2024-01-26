@@ -28,7 +28,7 @@ jobs:
       run: echo "The review count is ${{ env.REVIEW_COUNT }}"
     - name: Conditional Self-Fail
       run: |
-        if [ $REVIEW_COUNT -le 2 ]; then
+        if [ $REVIEW_COUNT -lt 2 ]; then
           echo "Insufficient reviews. Failing workflow."
           exit 1
         else
