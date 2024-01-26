@@ -48,6 +48,7 @@ jobs:
         if echo "$changed_files" | grep -q "prod"; then
           echo "Variable contains 'sample'."
           echo "::set-output name=changed::true"
+          echo "changed=true" >> $GITHUB_OUTPUT
 
         else
           echo "Variable does not contain 'sample'."
