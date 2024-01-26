@@ -21,7 +21,7 @@ jobs:
     - name: Get pull request information
       id: get_pr_info
       run: |
-          REVIEW=$(curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" -H "Accept: application/vnd.github.v3+json"  "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews" | jq length )
+          REVIEWS=$(curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" -H "Accept: application/vnd.github.v3+json"  "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews" | jq length )
           echo "Number of reviews: $REVIEWS"
     - name: Set output variable
       id: set_output
