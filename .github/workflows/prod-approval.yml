@@ -25,7 +25,9 @@ jobs:
       id: file_changed
       run: |
         echo ${{ github.repository }}
-        ${{ github.ref }}
+        echo ${{ github.ref }}
+        echo ${{ github.before }}
+        echo ${{ github.after }}
         git checkout --force ${{ github.ref }}
         changed_files=$(git diff --name-only origin/main)
         echo "Changed files:"
