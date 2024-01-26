@@ -22,8 +22,8 @@ jobs:
     - name: Check if the file is modified
       id: file_changed
       run: |
-        base_branch="main"  
-        changed_files=$(git diff --name-only $base_branch ${{ github.event.before }})
+        #base_branch="main"  
+        changed_files=$(git diff --name-only main ${{ github.event.before }})
         echo "Changed files:"
         echo "$changed_files"
         
