@@ -1,0 +1,30 @@
+name: Get Number of Approvals
+
+on:
+  pull_request_review:
+    types:
+      - submitted
+
+jobs:
+  get-approvals:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Git credentials
+      run: |
+        git config --global user.name "Your Name"
+        git config --global user.email "your.email@example.com"
+
+    - name: Get pull request information
+      id: get_pr_info
+      run: echo "PR_INFO=$(curl -sSL -H \"Authorization: Bearer ${{ secrets.ACTION_TOKEN }}\" \"https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}\")" >> $GITHUB_ENV
+
+    - name: Extract number of approvals
+      id: extract_approvals
+      run: echo "APPROVALS=$(echo $PR_INFO | jq --raw-output '.reviews[] | select(.state == \"APPROVED\") | .user.login' | sort -u | wc -l)" >> $GITHUB_ENV
+
+    - name: Display number of approvals
+      run: echo "Number of approvals: $APPROVALS"
