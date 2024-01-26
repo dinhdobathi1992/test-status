@@ -18,9 +18,23 @@ jobs:
       run: |
         git config --global user.name "Thi"
         git config --global user.email "dinhdobathi@gmail.com"
-
-    - name: Check if the file is modified
+    - name: Check for file changes
       id: file_changed
+      run: |
+        base_branch="main"  # Replace with the base branch name
+        changed_files=$(git diff --name-only $base_branch ${{ github.event.before }})
+
+        echo "Changed files:"
+        echo "$changed_files"
+
+        echo "::set-output name=changed_files::$changed_files"
+
+    - name: Notify if specific file changed
+      if: ${{ contains(steps.file_changed.outputs.changed_files, 'prod') }}
+      run: echo "File 'path/to/your/file' has changed."
+      
+    - name: Check if the file is modified
+      id: file_changed2
       run: |
         echo ${{ github.repository }}
         echo ${{ github.ref }}
