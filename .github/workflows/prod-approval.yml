@@ -25,7 +25,7 @@ jobs:
       id: file_changed
       run: |
         #base_branch="main"  
-        changed_files=$(git diff --name-only main ${{ github.event.before }})
+        changed_files=$(git diff --name-only origin/master HEAD)
         echo "Changed files:"
         echo "$changed_files"
         
