@@ -26,3 +26,11 @@ jobs:
           echo "REVIEW_COUNT=$REVIEWS" >> $GITHUB_ENV
     - name: Use the review count
       run: echo "The review count is ${{ env.REVIEW_COUNT }}"
+    - name: Conditional Self-Fail
+      run: |
+        if [ $REVIEW_COUNT -le 2 ]; then
+          echo "Insufficient reviews. Failing workflow."
+          exit 1
+        else
+          echo "Sufficient reviews. Continuing with workflow."
+        fi
