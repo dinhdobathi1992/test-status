@@ -24,8 +24,10 @@ jobs:
     - name: Check if the file is modified
       id: file_changed
       run: |
-        #base_branch="main"  
-        changed_files=$(git diff --name-only origin/master HEAD)
+        echo ${{ github.repository }}
+        ${{ github.ref }}
+        git checkout --force ${{ github.ref }}
+        changed_files=$(git diff --name-only origin/main)
         echo "Changed files:"
         echo "$changed_files"
         
