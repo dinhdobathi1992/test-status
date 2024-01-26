@@ -22,11 +22,20 @@ jobs:
     - name: Check if the file is modified
       id: file_changed
       run: |
-        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^**/prod'; then
+        base_branch="main"  
+        changed_files=$(git diff --name-only $base_branch ${{ github.event.before }})
+        echo "Changed files:"
+        echo "$changed_files"
+        
+        if echo "$changed_files" | grep -q "prod"; then
+          echo "Variable contains 'sample'."
           echo "::set-output name=changed::true"
+
         else
+          echo "Variable does not contain 'sample'."
           echo "::set-output name=changed::false"
         fi
+
 
     - name: Request approvals
       if: steps.file_changed.outputs.changed == 'true'
