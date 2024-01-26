@@ -1,0 +1,38 @@
+name: Request Approvals on File Change
+
+on:
+  pull_request:
+    paths:
+      - '**/prod'
+
+
+jobs:
+  request-approvals:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Git credentials
+      run: |
+        git config --global user.name "Thi"
+        git config --global user.email "dinhdobathi@gmail.com"
+
+    - name: Check if the file is modified
+      id: file_changed
+      run: |
+        if git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -q '^**/prod/'; then
+          echo "::set-output name=changed::true"
+        else
+          echo "::set-output name=changed::false"
+        fi
+
+    - name: Request approvals
+      if: steps.file_changed.outputs.changed == 'true'
+      run: |
+        PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+        curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          -X POST "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/requested_reviewers" \
+          -d '{"reviewers": ["reviewer1", "reviewer2"]}'
