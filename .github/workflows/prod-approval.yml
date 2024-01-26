@@ -60,6 +60,17 @@ jobs:
 
     - name: Notify if specific file changed
       run: echo ${{ steps.check_changes.outputs.changed }}
+
+    - name: Set approvals number
+      if: steps.check_changes.outputs.changed == 'true'
+      run: |
+        PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+        NEW_APPROVAL_COUNT=2
+        curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          -X PATCH "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}" \
+          -d "{\"required_approving_review_count\": $NEW_APPROVAL_COUNT}"
+          
     - name: Request approvals
       if: steps.check_changes.outputs.changed == 'true'
       run: |
@@ -69,7 +80,3 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           -X POST "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/requested_reviewers" \
           -d '{"reviewers": ["hhoangnguyen3018", "dinhdobathi3"]}'
-        curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3+json" \
-          -X PATCH "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}" \
-          -d "{\"required_approving_review_count\": $NEW_APPROVAL_COUNT}"
