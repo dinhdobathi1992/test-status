@@ -29,20 +29,33 @@ jobs:
     - name: Use the review count
       run: echo "The review count is ${{ env.REVIEW_COUNT }}"
 
-    - name: Add Comment
+    # - name: Add Comment
+    #   run: |
+    #       COMMENT="The review count is ${{ env.REVIEW_COUNT }}"
+        
+    #       curl -X POST \
+    #         -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
+    #         -H "Accept: application/vnd.github.v3+json" \
+    #         "https://api.github.com/repos/dinhdobathi1992/test-status/issues/${{ github.event.pull_request.number }}/comments" \
+    #         -d '{"body":"'"${COMMENT}"'"}'
+    - name: Conditional Self-Fail
       run: |
-          COMMENT="The review count is ${{ env.REVIEW_COUNT }}"
+        if [ $REVIEW_COUNT -lt 2 ]; then
+          echo "Insufficient reviews. Failing workflow. You need at least 2 approvers for prod's changes"
+          COMMENT="The review count is ${{ env.REVIEW_COUNT }} - You need at least 2 approvers for prod's changes"
         
           curl -X POST \
             -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             "https://api.github.com/repos/dinhdobathi1992/test-status/issues/${{ github.event.pull_request.number }}/comments" \
             -d '{"body":"'"${COMMENT}"'"}'
-    - name: Conditional Self-Fail
-      run: |
-        if [ $REVIEW_COUNT -lt 2 ]; then
-          echo "Insufficient reviews. Failing workflow."
           exit 1
         else
           echo "Sufficient reviews. Continuing with workflow."
+          COMMENT="The review count is ${{ env.REVIEW_COUNT }} - You are good to go"
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/dinhdobathi1992/test-status/issues/${{ github.event.pull_request.number }}/comments" \
+            -d '{"body":"'"${COMMENT}"'"}'
         fi
