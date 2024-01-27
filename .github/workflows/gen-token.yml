@@ -16,3 +16,4 @@ jobs:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
           gh api octocat
+          gh pr comment 19 --body "Hi from GitHub CLI"
