@@ -4,6 +4,12 @@ on:
   pull_request_review:
     types:
       - submitted
+  pull_request:
+    paths:
+      - '**/prod'
+    types:
+      - opened
+      - synchronize
 
 jobs:
   get-approvals:
