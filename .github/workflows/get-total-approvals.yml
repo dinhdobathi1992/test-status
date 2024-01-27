@@ -1,0 +1,48 @@
+name: Get Number of Approvals
+
+on:
+  pull_request_review:
+    types:
+      - submitted
+
+jobs:
+  get-approvals:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Git credentials
+      run: |
+        git config --global user.name "Your Name"
+        git config --global user.email "your.email@example.com"
+
+    - name: Get pull request information
+      id: get_pr_info
+      run: |
+          REVIEWS=$(curl -L -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }} " -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews | jq 'map(select(.state == "COMMENTED")) | length')
+          
+          #REVIEWS=$(curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" -H "Accept: application/vnd.github.v3+json"  "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/reviews"  | jq '. | select(.state == "COMMENTED") | length' )
+          echo "Number of reviews: $REVIEWS"
+          echo "REVIEW_COUNT=$REVIEWS" >> $GITHUB_ENV
+    - name: Use the review count
+      run: echo "The review count is ${{ env.REVIEW_COUNT }}"
+
+    - name: Add Comment
+      run: |
+          COMMENT="The review count is ${{ env.REVIEW_COUNT }}"
+        
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/dinhdobathi1992/test-status/issues/${{ github.event.pull_request.number }}/comments" \
+            -d '{"body":"'"${COMMENT}"'"}'
+    - name: Conditional Self-Fail
+      run: |
+        if [ $REVIEW_COUNT -lt 2 ]; then
+          echo "Insufficient reviews. Failing workflow."
+          exit 1
+        else
+          echo "Sufficient reviews. Continuing with workflow."
+        fi
