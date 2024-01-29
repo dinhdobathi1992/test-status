@@ -73,23 +73,23 @@ jobs:
            -F line=2 \
            -f side='RIGHT' 
            
-      - name: Set the value in bash
-        id: step_one
-        env:
-          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
-        run: |
-          {
-            echo 'RAW_RESPONSE<<EOF'
-            cat $DIFF
-            echo EOF
-          } >> "$GITHUB_ENV"
-      - name: Read file content
-        env:
-          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
-        id: read-file
-        run: |
-          echo $(cat $DIFF)
-          echo "::set-output name=content::$(cat $DIFF)"
-          echo ${{ env.RAW_RESPONSE }}
+      # - name: Set the value in bash
+      #   id: step_one
+      #   env:
+      #     GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+      #     DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
+      #   run: |
+      #     {
+      #       echo 'RAW_RESPONSE<<EOF'
+      #       cat $DIFF
+      #       echo EOF
+      #     } >> "$GITHUB_ENV"
+      # - name: Read file content
+      #   env:
+      #     GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+      #     DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
+      #   id: read-file
+      #   run: |
+      #     echo $(cat $DIFF)
+      #     echo "::set-output name=content::$(cat $DIFF)"
+      #     echo ${{ env.RAW_RESPONSE }}
