@@ -4,9 +4,6 @@ on:
   pull_request:
     types: [opened, synchronize]
 
-env:
-  DIFF: ${{ compare(github.base_ref, github.head_ref) }}
-
 jobs:
   review:
     permissions: write-all # Check permission when leave comment action failed
