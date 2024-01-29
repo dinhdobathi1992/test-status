@@ -86,7 +86,7 @@ jobs:
            -f start_side='RIGHT' \
            -F line=2 \
            -f side='RIGHT' \
-           -f diff_hunk: "@@ -3601,6 +3601,18 @@ Python traceback:\n   
+           -f diff_hunk="@@ -3601,6 +3601,18 @@ Python traceback:\n   
                   tm_scope: text.python.traceback\n   
                   ace_mode: text\n   
                   language_id: 304\n+Q:\n+  
