@@ -59,8 +59,8 @@ jobs:
         run: |
           gh api octocat
           COMMENT="The review count is ${{ env.REVIEW_COUNT }} - You are good to go"
-          TEST="$(cat $DIFF)"
-          echo $TEST
+          cmt=$(cat $DIFF)
+          echo $cmt
           gh api \
           --method POST \
             -H "Accept: application/vnd.github+json" \
