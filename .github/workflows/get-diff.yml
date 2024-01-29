@@ -63,24 +63,25 @@ jobs:
           #TEST="$(cat $DIFF)"
           TEST=$(tail -n +3 $DIFF)
           echo $TEST
-          gh api repos/dinhdobathi1992/test-status/issues/${{ github.event.pull_request.number }}/comments \
-            --method POST \
-            --header "Accept: application/vnd.github.v3+json" \
-            --header "Content-Type: application/json" \
-            --input - <<EOF
-            {
-              "body": "Hello @dinhdobathi1992! Here are some changes:\n\n\`\`\`diff\n --\n$TEST\n\`\`\`",
-              "path": "file1.txt",
-              "position": 1
-            }
-            EOF
+          # gh api repos/dinhdobathi1992/test-status/issues/${{ github.event.pull_request.number }}/comments \
+          #   --method POST \
+          #   --header "Accept: application/vnd.github.v3+json" \
+          #   --header "Content-Type: application/json" \
+          #   --input - <<EOF
+          #   {
+          #     "body": "Hello @dinhdobathi1992! Here are some changes:\n\n\`\`\`diff\n --\n$TEST\n\`\`\`",
+          #     "path": "file1.txt",
+          #     "position": 1
+          #   }
+          #   EOF
 
           gh api \
           --method POST \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/dinhdobathi1992/test-status/issues/${{ github.event.pull_request.number }}/comments \
-            -f body="hello @dinhdobathi1992 - Here are some changed:  -- \n$TEST" \
+            #-f body="hello @dinhdobathi1992 - Here are some changed:  -- \n$TEST" \
+            -f body="hello @dinhdobathi1992 - Here are some changes:  -- \n\`$TEST\`" \
            -f path='file1.txt' \
            -F start_line=1 \
            -f start_side='RIGHT' \
