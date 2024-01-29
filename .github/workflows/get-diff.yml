@@ -85,4 +85,13 @@ jobs:
            -F start_line=1 \
            -f start_side='RIGHT' \
            -F line=2 \
-           -f side='RIGHT' 
+           -f side='RIGHT' \
+           -f diff_hunk: "@@ -3601,6 +3601,18 @@ Python traceback:\n   
+                  tm_scope: text.python.traceback\n   
+                  ace_mode: text\n   
+                  language_id: 304\n+Q:\n+  
+                  type: programming\n+  
+                  color: \"#0040CD\"\n+  
+                  aliases:\n+  -Kdb+\n+  
+                  extensions:\n+  - \".q\""
+
