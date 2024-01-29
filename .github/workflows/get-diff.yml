@@ -60,14 +60,15 @@ jobs:
         run: |
           gh api octocat
           COMMENT="The review count is ${{ env.REVIEW_COUNT }} - You are good to go"
-          TEST="$(cat $DIFF)"
+          #TEST="$(cat $DIFF)"
+          TEST=$(tail -n +3 $DIFF)
           echo $TEST
           gh api \
           --method POST \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/dinhdobathi1992/test-status/issues/${{ github.event.pull_request.number }}/comments \
-            -f body="$TEST" \
+            -f body="hello -- $TEST" \
            -f path='file1.txt' \
            -F start_line=1 \
            -f start_side='RIGHT' \
@@ -93,23 +94,3 @@ jobs:
             -f body="$TEST" \
            -f side='RIGHT' 
            
-      - name: Read JSON file
-        env:
-          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          DIFF: ${{ steps.git-diff-action.outputs.json-diff-path }}
-        id: read-json
-        run: echo "::set-output name=json::$(cat $DIFF)"
-
-      - name: Comment on pull request
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{ secrets.ACTION_TOKEN }}
-          script: |
-            const jsonContent = JSON.parse("${{ steps.read-json.outputs.json }}");
-            const context = github.context;
-            const commentBody = JSON.stringify(jsonContent, null, 2);
-            github.issues.createComment({
-              ...context.repo,
-              issue_number: context.payload.pull_request.number,
-              body: commentBody,
-            });
