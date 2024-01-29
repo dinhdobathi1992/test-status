@@ -2,35 +2,23 @@ name: Explain PR
 
 on:
   pull_request:
-    paths:
-      - '**/dev'
+    types: [opened, synchronize]
 
 env:
   DIFF: ${{ compare(github.base_ref, github.head_ref) }}
 
 jobs:
-  explain-diff:
+  review:
+    permissions: write-all # Check permission when leave comment action failed
     runs-on: ubuntu-latest
-
     steps:
-    - name: Explain Diff
-      id: explain
-      uses: thecloudlore/explain-diff@v0.2
-      with:
-        diff: ${{ env.DIFF }}
-        apikey: ${{ secrets.OPENAI_APIKEY }}
-    
-    - name: Post Comment
-      uses: actions/github-script@0.9.1
-      env:
-        GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
-      if: steps.explain.outputs.explanation
-      with:
-        script: |
-          const octokit = require('@octokit/rest')({ auth: process.env.ACTION_TOKEN });
-          octokit.pulls.createComment({
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            pull_number: github.context.payload.pull_request.number,
-            body: '${{ steps.explain.outputs.explanation }}'
-          });
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: OpenAI PR Review
+        uses: cawcaw253/ai-review-action@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_APIKEY }}
+          LANGUAGE: "english"
+          MODEL: "gpt-3.5-turbo"
+
