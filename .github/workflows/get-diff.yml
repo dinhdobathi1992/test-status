@@ -72,7 +72,18 @@ jobs:
            -f start_side='RIGHT' \
            -F line=2 \
            -f side='RIGHT' 
-
+           
+      - name: Set the value in bash
+        id: step_one
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
+        run: |
+          {
+            echo 'RAW_RESPONSE<<EOF'
+            cat $DIFF
+            echo EOF
+          } >> "$GITHUB_ENV"
       - name: Read file content
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
@@ -81,17 +92,4 @@ jobs:
         run: |
           echo $(cat $DIFF)
           echo "::set-output name=content::$(cat $DIFF)"
-
-      - name: Comment on pull request
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{ steps.generate_token.outputs.token }}
-          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
-          script: |
-            const content = "${{ steps.read-file.outputs.content }}";
-            const context = github.context;
-            github.issues.createComment({
-              ...context.repo,
-              issue_number: context.payload.pull_request.number,
-              body: content,
-            });
+          echo ${{ env.RAW_RESPONSE }}
