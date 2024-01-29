@@ -72,16 +72,15 @@ jobs:
            -f start_side='RIGHT' \
            -F line=2 \
            -f side='RIGHT' 
-           
-      - name: Checkout code
-        uses: actions/checkout@v2
 
       - name: Read file content
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
           DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
         id: read-file
-        run: echo "::set-output name=content::$(cat $DIFF)"
+        run: |
+          echo $(cat $DIFF)
+          echo "::set-output name=content::$(cat $DIFF)"
 
       - name: Comment on pull request
         uses: actions/github-script@v5
