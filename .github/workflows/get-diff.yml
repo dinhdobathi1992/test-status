@@ -42,6 +42,8 @@ jobs:
           cat $DIFF
           test=$(cat $DIFF)
           echo $test
+          COMMENT2=$test
+          echo $COMMENT2
           echo "COMMENT2=$test" >> $GITHUB_ENV
 
       - name: Generate a token
