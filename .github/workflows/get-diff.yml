@@ -82,7 +82,7 @@ jobs:
         run: |
           gh api octocat
           COMMENT="The review count is ${{ env.REVIEW_COUNT }} - You are good to go"
-          jq '{files: [.files[] | {path, changes: [.chunks[].changes[] | {type, lineAfter, content: .content | rtrimstr("\r")}]}]}' $DIFF)
+          jq '{files: [.files[] | {path, changes: [.chunks[].changes[] | {type, lineAfter, content: .content | rtrimstr("\r")}]}]}' $DIFF
           TEST="$(jq '{files: [.files[] | {path, changes: [.chunks[].changes[] | {type, lineAfter, content: .content | rtrimstr("\r")}]}]}' $DIFF)"
           echo $TEST
           gh api \
