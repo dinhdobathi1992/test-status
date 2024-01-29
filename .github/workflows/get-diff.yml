@@ -78,10 +78,11 @@ jobs:
       - name: Sent JSON 
         env:
           GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-          DIFF: ${{ steps.git-diff-action.outputs.raw-diff-path }}
+          DIFF: ${{ steps.git-diff-action.outputs.json-diff-path }}
         run: |
           gh api octocat
           COMMENT="The review count is ${{ env.REVIEW_COUNT }} - You are good to go"
+          jq '{files: [.files[] | {path, changes: [.chunks[].changes[] | {type, lineAfter, content: .content | rtrimstr("\r")}]}]}' $DIFF)
           TEST="$(jq '{files: [.files[] | {path, changes: [.chunks[].changes[] | {type, lineAfter, content: .content | rtrimstr("\r")}]}]}' $DIFF)"
           echo $TEST
           gh api \
