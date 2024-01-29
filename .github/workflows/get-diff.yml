@@ -33,6 +33,7 @@ jobs:
           cat $DIFF
           test=$(cat $DIFF)
           echo $test
+          jq '{files: [.files[] | {path, changes: [.chunks[].changes[] | {type, lineAfter, content: .content | rtrimstr("\r")}]}]}' $DIFF
           
       # Print the diff in raw git format
       - name: print raw diff
