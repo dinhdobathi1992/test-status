@@ -13,7 +13,7 @@ jobs:
       uses: manjunathsb10/chatgpt-code-review-action@v0.2
       with:
         PROGRAMMING_LANGUAGE: 'JavaScript'
-        OPENAI_TOKEN: ${{ secrets.OPENAI_TOKEN }}
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        OPENAI_TOKEN: ${{ secrets.OPENAI_APIKEY }}
+        GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
         FULL_REVIEW_COMMENT: 'chatgpt'
         REVIEW_COMMENT_PREFIX: 'chatgpt:'
