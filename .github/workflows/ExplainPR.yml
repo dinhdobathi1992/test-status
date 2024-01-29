@@ -3,7 +3,7 @@ name: Explain PR
 on:
   pull_request:
     paths:
-      - '**/prod'
+      - '**/dev'
 
 env:
   DIFF: ${{ compare(github.base_ref, github.head_ref) }}
