@@ -10,7 +10,7 @@ jobs:
     if: github.event.comment.user.login == 'dinhdobathi1992' && startsWith(github.event.comment.body, 'chatgpt')
     steps:
     - name: OpenAI ChatGPT Code Review
-      uses: manjunathsb10/chatgpt-code-review-action@v0.2
+      uses: manjunathsb10/chatgpt-code-review-action@1.0.4
       with:
         PROGRAMMING_LANGUAGE: 'JavaScript'
         OPENAI_TOKEN: ${{ secrets.OPENAI_APIKEY }}
