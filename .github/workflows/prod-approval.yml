@@ -78,9 +78,38 @@ jobs:
         NEW_APPROVAL_COUNT=2
         author=${{ github.event.pull_request.user.login }}
         echo "PR Author: $author"
+        #get reviewer
+        json_array1='["hhoangnguyen3018", "dinhdobathi3", "dinhdobathi1992"]'
+        new_array=()
+        # Use jq to convert the JSON array to a Bash array
+        bash_array=($(echo "$json_array1" | jq -r '.[]'))
+        array_length=${#bash_array[@]}
+        echo "The length of the array is: $array_length"
+        for ((i=1; i<=array_length; i++)); do
         
-        reviewer='["hhoangnguyen3018", "dinhdobathi3"]'
+          if [[ "${bash_array[$i]}" != "$author" ]]; then
+          new_array+=("${bash_array[$i]}")
+          fi
+        done
+        echo $bash_array
+        echo $new_array
+        new_array_length=${#new_array[@]}
+        echo "The length of the new array is: $new_array_length"
+        
+        
+        
+        json_array="["
+        for element in "${new_array[@]}"; do
+          json_array+="\"$element\", "
+        done
+        json_array="${json_array%, }]"  # Remove the trailing comma and space
+        
+        # Print the resulting JSON array
+        echo "Reconstructed JSON Array: $json_array"
+          
+        ##
+        #reviewer='["hhoangnguyen3018", "dinhdobathi3"]'
         curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           -X POST "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/requested_reviewers" \
-          -d "{\"reviewers\": $reviewer}"
+          -d "{\"reviewers\": $json_array}"
