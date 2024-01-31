@@ -87,7 +87,7 @@ jobs:
         array_length=${#bash_array[@]}
         echo "The length of the array is: $array_length"
         echo "${bash_array[@]}"
-        for ((i=0; i<=$array_length; i++)); do
+        for ((i=0; i<$array_length; i++)); do
           echo $i
           echo ${bash_array[$i]}
           if [[ "${bash_array[$i]}" != "$author" ]]; then
@@ -95,12 +95,8 @@ jobs:
             echo ${bash_array[$i]}
             new_array+=("${bash_array[$i]}")
           fi
-          echo "debug4"
         done
-        echo "debug6"
-        #echo $bash_array
-        echo $new_array
-        echo "debug7"
+        echo "${new_array[@]}"
         new_array_length=${#new_array[@]}
         echo "The length of the new array is: $new_array_length"
         
