@@ -76,6 +76,9 @@ jobs:
       run: |
         PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
         NEW_APPROVAL_COUNT=2
+        author=${{ github.event.pull_request.user.login }}
+        echo "PR Author: $author"
+        
         reviewer='["hhoangnguyen3018", "dinhdobathi3"]'
         curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
