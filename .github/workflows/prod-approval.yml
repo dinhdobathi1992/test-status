@@ -83,6 +83,7 @@ jobs:
         new_array=()
         # Use jq to convert the JSON array to a Bash array
         bash_array=($(echo "$json_array1" | jq -r '.[]'))
+        
         array_length=${#bash_array[@]}
         echo "The length of the array is: $array_length"
         for ((i=1; i<=array_length; i++)); do
@@ -99,8 +100,9 @@ jobs:
         
         
         json_array="["
-        for element in "${new_array[@]}"; do
-          json_array+="\"$element\", "
+        for ((i=1; i<=new_array_length; i++)); do
+        	echo ${new_array[$i]}
+        	json_array+="\"${new_array[$i]}\", "
         done
         json_array="${json_array%, }]"  # Remove the trailing comma and space
         
