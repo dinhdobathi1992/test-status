@@ -76,8 +76,8 @@ jobs:
       run: |
         PR_NUMBER=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
         NEW_APPROVAL_COUNT=2
-        reviewer="["hhoangnguyen3018", "dinhdobathi3"]"
+        reviewer='["hhoangnguyen3018", "dinhdobathi3"]'
         curl -sSL -H "Authorization: Bearer ${{ secrets.ACTION_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
           -X POST "https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}/requested_reviewers" \
-          -d '{"reviewers": $reviewer}'
+          -d "{\"reviewers\": $reviewer}"
