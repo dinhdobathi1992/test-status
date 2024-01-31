@@ -15,8 +15,15 @@ jobs:
 
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install jq -y
-
+      - name: Generate a token
+        id: generate_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: Detect JSON Changes
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
         run: |
           ls
           git branch
