@@ -36,27 +36,27 @@ jobs:
         echo "File 'prod' has changed."
         echo "::set-output name=changed::true"
         echo "changed=true" >> $GITHUB_OUTPUT
-    - name: Check if the file is modified
-      id: file_changed2
-      run: |
-        echo ${{ github.repository }}
-        echo ${{ github.ref }}
-        echo ${{ github.event.before }}
-        echo ${{ github.event.after }}
-        #git checkout --force ${{ github.ref }}
-        changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
-        echo "Changed files:"
-        echo "$changed_files"
+    # - name: Check if the file is modified
+    #   id: file_changed2
+    #   run: |
+    #     echo ${{ github.repository }}
+    #     echo ${{ github.ref }}
+    #     echo ${{ github.event.before }}
+    #     echo ${{ github.event.after }}
+    #     #git checkout --force ${{ github.ref }}
+    #     changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+    #     echo "Changed files:"
+    #     echo "$changed_files"
         
-        if echo "$changed_files" | grep -q "prod"; then
-          echo "Variable contains 'sample'."
-          echo "::set-output name=changed::true"
-          echo "changed=true" >> $GITHUB_OUTPUT
+    #     if echo "$changed_files" | grep -q "prod"; then
+    #       echo "Variable contains 'sample'."
+    #       echo "::set-output name=changed::true"
+    #       echo "changed=true" >> $GITHUB_OUTPUT
 
-        else
-          echo "Variable does not contain 'sample'."
-          echo "::set-output name=changed::false"
-        fi
+    #     else
+    #       echo "Variable does not contain 'sample'."
+    #       echo "::set-output name=changed::false"
+    #     fi
 
     - name: Notify if specific file changed
       run: echo ${{ steps.check_changes.outputs.changed }}
