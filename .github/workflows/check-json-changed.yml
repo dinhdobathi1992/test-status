@@ -37,7 +37,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             https://api.github.com/repos/dinhdobathi1992/test-status/issues/${{ github.event.pull_request.number }}/comments \
-            -f body="hello @dinhdobathi1992 - Here are some changed:   --  $TEST " \
+            -f body="hello @dinhdobathi1992 - Here are some changed:\n   --  $TEST " \
            -f path='file1.txt' \
            -F start_line=1 \
            -f start_side='RIGHT' \
