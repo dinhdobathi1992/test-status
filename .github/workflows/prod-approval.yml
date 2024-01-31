@@ -103,7 +103,7 @@ jobs:
         
         
         json_array="["
-        for ((i=1; i<=new_array_length; i++)); do
+        for ((i=0; i<new_array_length; i++)); do
         	echo ${new_array[$i]}
         	json_array+="\"${new_array[$i]}\", "
         done
