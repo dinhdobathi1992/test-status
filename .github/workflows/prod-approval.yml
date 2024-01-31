@@ -86,14 +86,22 @@ jobs:
         
         array_length=${#bash_array[@]}
         echo "The length of the array is: $array_length"
+        echo "debug"
+        echo $bash_array
+        echo "debug2"
         for ((i=1; i<=array_length; i++)); do
-        
+          echo "debug3"
           if [[ "${bash_array[$i]}" != "$author" ]]; then
+          echo "debug4"
+          echo ${bash_array[$i]}
           new_array+=("${bash_array[$i]}")
           fi
+          echo "debug5"
         done
-        echo $bash_array
+        echo "debug6"
+        #echo $bash_array
         echo $new_array
+        echo "debug7"
         new_array_length=${#new_array[@]}
         echo "The length of the new array is: $new_array_length"
         
