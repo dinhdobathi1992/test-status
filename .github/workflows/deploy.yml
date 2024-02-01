@@ -1,0 +1,63 @@
+name: Deploy manual
+
+on:
+    workflow_dispatch:
+        inputs:
+            project-id:
+                description: The id of the project to be deployed
+                required: true
+            prod:
+                description: Is a production deployment
+                type: boolean
+                default: false
+                required: false
+jobs:
+    find-project:
+        runs-on: ubuntu-latest
+        outputs:
+            matrix: ${{ steps.set-matrix.outputs.matrix }}
+        steps:
+            - uses: actions/checkout@v2
+            - id: set-matrix
+              name: Select projects for Deployment
+              run: |
+                  projects=$(cat ./.github/config/projects.json | PROJECT_ID="$PROJECT_ID" jq -c 'map( select(.project_id | test(env.PROJECT_ID; "i")))')                
+                  echo ::set-output name=matrix::{\"include\":$(echo $projects)}\"
+              env:
+                  PROJECT_ID: ${{ github.event.inputs.project-id }}
+
+    deploy:
+        name: Deploy ${{ matrix.project }}
+        needs: find-project
+        runs-on: ubuntu-latest
+        strategy:
+            matrix: ${{fromJson(needs.find-project.outputs.matrix)}}
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Setup NodeJS 16
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16.x
+
+            - name: Show NodeJS version
+              run: npm --version
+
+            - name: Create .npmrc file
+              run: echo "${{ secrets.DOTNPMRC }}" > .npmrc
+
+            - name: Install vercel
+              run: npm i -g vercel
+
+            - name: Get prod flag
+              if: ${{ inputs.prod == true }}
+              run: echo '::set-output name=PROD_FLAG::--prod'
+              id: get-prod-flag
+
+            - name: Deploy
+              run: |
+                  VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=${{ matrix.project_id }} vercel --force --token ${{ secrets.VERCEL_TOKEN }} $PROD_FLAG
+              env:
+                  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+                  PROD_FLAG: ${{ steps.get-prod-flag.outputs.PROD_FLAG }}
