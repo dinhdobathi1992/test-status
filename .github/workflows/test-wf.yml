@@ -1,0 +1,87 @@
+name: Get Number of Approvals
+
+on:
+  workflow_dispatch:
+
+jobs:
+  env_change_local:
+    runs-on: ubuntu-latest
+    #step1 : checkout
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v1
+      #step1 : generate token
+      - name: Generate a token
+        id: generate_token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+      #step3: check the file changes
+
+      - name: Install vercel
+        run: npm i -g vercel
+
+      - name: Check for file changes
+        id: file_changed
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          base_branch="main"  # Replace with the base branch name
+          changed_files=$(git diff --name-only origin/main HEAD )  
+
+          echo "Changed files:"
+          echo "$changed_files"
+          for file in $changed_files; do
+            echo "File changed: $file"
+            project_name=$(echo "$file" | sed 's|/.env.prod$||;s|/.env.local$||' | awk -F/ '{print $NF}')
+            echo "Project name : $project_name"
+            working_folder=$(dirname "$file")
+            echo "Working folder: $working_folder"
+            json_data=$(cat .github/config/projects.json)
+            PROJECT_ID=$(echo $json_data | jq -r ".[] | select(.project == \"$project_name\")" | jq .project_id)
+            PROJECT_ID=${PROJECT_ID//\"/}
+            echo "Project ID: $PROJECT_ID"
+            echo $VERCEL_TOKEN
+            echo $VERCEL_ORG_ID
+
+            echo "####testing vercel"
+            vercel --version
+            VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env ls --token $VERCEL_TOKEN
+            for line in $(tail -n +2 $file) ; do
+              echo "Line: $line"
+              key=$(echo $line | awk -F= '{print $1}')
+              value=$(echo $line | awk -F= '{print $2}')
+              echo "Key: $key"
+              echo "Value: $value"
+              #VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env add $key $value --token $VERCEL_TOKEN
+            done 
+          done
+          echo "::set-output name=changed_files::$changed_files"
+      #step4: check if the file has changed and echo out
+      - name: Notify if specific file changed
+        id: check_changes
+        if: ${{ contains(steps.file_changed.outputs.changed_files, 'production.json') }}
+        run: |
+          echo "File 'production.json' has changed."
+          echo "::set-output name=changed::true"
+          echo "changed=true" >> $GITHUB_OUTPUT
+
+      # - name: install gh cli
+      #   run: |
+      #     type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+      #     curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+      #     && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+      #     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+      #     && sudo apt update \
+      #     && sudo apt install gh -y
+
+      - name: echo file changed
+        env:
+          GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+          CHANGED_FILE: ${{ steps.file_changed.outputs.changed_files }}
+        run: |
+          for file in $CHANGED_FILE; do
+            echo "File changed: $file"
+          done
