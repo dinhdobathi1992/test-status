@@ -1,4 +1,4 @@
-name: List Changes After PR Merge
+name: Deploy Vercel ENV 
 
 on:
   pull_request:
@@ -11,13 +11,13 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v1
       - name: Install vercel
         run: npm i -g vercel
       - name: List Changed Files
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN_TEST }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID_TEST }}
         run: |
           # Get the base and head SHAs of the merged pull request
           BASE_SHA=$(jq -r '.pull_request.base.sha' "$GITHUB_EVENT_PATH")
@@ -30,14 +30,15 @@ jobs:
           # Print the list of changed files
           echo "Changed files:"
           echo "$CHANGED_FILES"
-
-          # Iterate through each file in the list
+          
+          # Filter only .env.preview or .env.production can be  processes
+          
           while IFS= read -r file; do
               # Get the file extension
               extension="${file##*.}"
 
-              # Check if the file has a ".local" or ".prod" extension
-              if [ "$extension" == "local" ] || [ "$extension" == "prod" ]; then
+              # Check if the file has a ".preview" or ".production" extension
+              if [ "$extension" == "preview" ] || [ "$extension" == "production" ]; then
                   # Append the file to the filtered_files variable
                   filtered_files+="$file"$'\n'
               fi
@@ -47,35 +48,50 @@ jobs:
           echo "Filtered files:"
           echo "$filtered_files"
 
+          # Loop foreach file in filtered file. 
           for file in $filtered_files; do
             echo "File changed: $file"
-            project_name=$(echo "$file" | sed 's|/.env.prod$||;s|/.env.local$||' | awk -F/ '{print $NF}')
+            
+            #get the project name base on file changed's path
+            project_name=$(echo "$file" | sed 's|/.env.production$||;s|/.env.preview$||' | awk -F/ '{print $NF}')
+            echo "Project name : $project_name"
+            
+            #get the ENV base on file changed's path
             env="${file#*.env.}"
             echo "Environment: $env"
-            echo "Project name : $project_name"
+
+            #making sure which folder is working on
             working_folder=$(dirname "$file")
             echo "Working folder: $working_folder"
+
+            #get projectID base on project name and predefined project config json  
             json_data=$(cat .github/config/projects.json)
             PROJECT_ID=$(echo $json_data | jq -r ".[] | select(.project == \"$project_name\")" | jq .project_id)
+
+            #remove double-quote after jq 
             PROJECT_ID=${PROJECT_ID//\"/}
             echo "Project ID: $PROJECT_ID"
-            echo $VERCEL_TOKEN
-            echo $VERCEL_ORG_ID
+            
 
             echo "####testing vercel"
             vercel --version
+            #list all env var in current project 
             VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env ls --token $VERCEL_TOKEN
+
+            #for eaceh line in .env.preview or .env.production , read the file from 2nd line, split line to key/value pair
             for line in $(tail -n +2 $file) ; do
-              echo "Line: $line"
+              #echo "Line: $line"
               key=$(echo $line | awk -F= '{print $1}')
               value=$(echo $line | awk -F= '{print $2}')
-              echo "Key: $key"
+              value=${value//\"/}
+              #echo "Key: $key"
+
+              #remove the vercel variable with $env, $key, $projectId 
               if [ $key == "REACT_LOGO_WIDTH" ]; then
                 echo "Key is REACT_LOGO_WIDTH"
-                VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env rm  $key --token $VERCEL_TOKEN --yes
+                VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env rm  $key $env --token $VERCEL_TOKEN --yes
+                #re-add the vercel variable with $env, $key/value, $projectId 
                 echo $value | VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env add $key $env --token $VERCEL_TOKEN --yes
               fi
-              echo "Value: $value"
-              #VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env add $key $value --token $VERCEL_TOKEN
             done 
           done
