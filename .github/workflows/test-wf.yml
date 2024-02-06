@@ -77,21 +77,21 @@ jobs:
             vercel --version
             #list all env var in current project 
             VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env ls --token $VERCEL_TOKEN
-
+            ./.github/scripts/parse_env.bash $file $VERCEL_TOKEN $VERCEL_ORG_ID $PROJECT_ID $env
             #for eaceh line in .env.preview or .env.production , read the file from 2nd line, split line to key/value pair
-            for line in $(tail -n +2 $file) ; do
-              #echo "Line: $line"
-              key=$(echo $line | awk -F= '{print $1}')
-              value=$(echo $line | awk -F= '{print $2}')
-              value=${value//\"/}
-              #echo "Key: $key"
+            # for line in $(tail -n +2 $file) ; do
+            #   #echo "Line: $line"
+            #   key=$(echo $line | awk -F= '{print $1}')
+            #   value=$(echo $line | awk -F= '{print $2}')
+            #   value=${value//\"/}
+            #   #echo "Key: $key"
 
-              #remove the vercel variable with $env, $key, $projectId 
-              if [ $key == "REACT_LOGO_WIDTH" ]; then
-                echo "Key is REACT_LOGO_WIDTH"
-                VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env rm  $key $env --token $VERCEL_TOKEN --yes
-                #re-add the vercel variable with $env, $key/value, $projectId 
-                echo $value | VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env add $key $env --token $VERCEL_TOKEN --yes
-              fi
-            done 
+            #   #remove the vercel variable with $env, $key, $projectId 
+            #   if [ $key == "REACT_LOGO_WIDTH" ]; then
+            #     echo "Key is REACT_LOGO_WIDTH"
+            #     VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env rm  $key $env --token $VERCEL_TOKEN --yes
+            #     #re-add the vercel variable with $env, $key/value, $projectId 
+            #     echo $value | VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$PROJECT_ID vercel env add $key $env --token $VERCEL_TOKEN --yes
+            #   fi
+            # done 
           done
