@@ -1,3 +1,5 @@
 .github/workflows/env_change.yml
 .env.secret
 *.sh
+merged-check.yml
+pr-closed.json
