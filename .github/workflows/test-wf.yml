@@ -37,7 +37,7 @@ jobs:
               # Get the file extension
               extension="${file##*.}"
 
-              # Check if the file has a ".preview" or ".production" extension
+              # Check if the file has a ".local" or ".production" extension
               if [ "$extension" == "preview" ] || [ "$extension" == "production" ]; then
                   # Append the file to the filtered_files variable
                   filtered_files+="$file"$'\n'
