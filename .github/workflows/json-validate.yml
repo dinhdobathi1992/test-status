@@ -56,6 +56,7 @@ jobs:
         
     - name: Validate Changed files
       id: validate_files
+      shell: bash
       env:
         GH_TOKEN: ${{ steps.generate_token.outputs.token }}
         CHANGED_FILES: ${{ steps.file_changed.outputs.changed_files }}
