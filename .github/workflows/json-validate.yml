@@ -64,6 +64,16 @@ jobs:
       run: |
         echo "Validating files"
         echo "Changed files: $CHANGED_FILES"
+        while IFS= read -r file; do
+        # Get the file extension
+        extension="${file##*.}"
+
+        # Check if the file has a ".preview" or ".production" extension
+        if [ "$extension" == "preview" ] || [ "$extension" == "production" ]; then
+            # Append the file to the filtered_files variable
+            filtered_files+="$file"$'\n'
+        fi
+          done <<< "$CHANGED_FILES"
         for file in $filtered_files; do
           echo "Validating file: $file"
           node .github/scripts/validatejson.js $file
