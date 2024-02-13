@@ -1,0 +1,61 @@
+name: Get Number of Approvals
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+
+
+jobs:
+  get-approvals:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+
+    - name: Generate a token
+      id: generate_token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ secrets.APP_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+        
+    - name: Check for file changes & validate json inside file
+      id: file_changed
+      run: |
+        base_branch="main"  # Replace with the base branch name
+        changed_files=$(git diff --name-only origin/main HEAD )
+
+        echo "Changed files:"
+        echo "$changed_files"
+
+        echo "::set-output name=changed_files::$changed_files"
+        
+    - name: Validate Changed files
+      id: validate_files
+      env:
+        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        CHANGED_FILES: ${{ steps.file_changed.outputs.changed_files }}
+      if: ${{ contains(steps.file_changed.outputs.changed_files, '.env.') }}
+      run: |
+        echo "Validating files"
+        echo "Changed files: $CHANGED_FILES"
+        for file in $filtered_files; do
+          echo "Validating file: $file"
+          node .github/scripts/validate.js $file
+        done
+
+    - name: Comment 
+      if: ${{ contains(steps.file_changed.outputs.changed_files, '.env.production') }}
+      env:
+        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+      run: |
+          echo "Commenting on PR"
+          # gh api \
+          # --method POST \
+          #   -H "Accept: application/vnd.github+json" \
+          #   -H "X-GitHub-Api-Version: 2022-11-28" \
+          #   https://api.github.com/repos/Decubate-com/env-management/issues/${{ github.event.pull_request.number }}/comments \
+          #   -f body='Your PR was approved - You are good to go '
