@@ -18,7 +18,7 @@ for (const variable of file_env_vars) {
         console.log('JSON format is valid:', themeObject);
     } catch (error) {
         console.error('Invalid JSON format:', error);
-        process.exit();
+        process.exit(1);
     }
     console.log("");
   }
