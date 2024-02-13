@@ -23,3 +23,4 @@ for (const variable of file_env_vars) {
     console.log("");
   }
 
+console.log("All JSON formats are valid");
