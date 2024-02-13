@@ -65,7 +65,7 @@ jobs:
         echo "Changed files: $CHANGED_FILES"
         for file in $filtered_files; do
           echo "Validating file: $file"
-          node .github/scripts/validate.js $file
+          node .github/scripts/validatejson.js $file
         done
 
     - name: Comment 
