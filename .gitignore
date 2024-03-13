@@ -3,3 +3,4 @@
 *.sh
 merged-check.yml
 pr-closed.json
+*.pem
