@@ -1,0 +1,128 @@
+{
+    "vpc_id": "",
+    "vpc_subnet_one": "",
+    "vpc_subnet_two": "",
+    "account_id": "",
+    "aws_region": "ap-southeast-1",
+    "public_bucket_name": "",
+    "ses_email": "",
+    "kyc_from_email": "",
+    "kyc_support_email": "",
+    "company_name": "",
+    "cmc_api_key": "9",
+    "bad_words_api_key": "",
+    "payment_receiver": "",
+    "supports_all_countries": false,
+    "recaptcha_secret": "",
+    "launchpad_base_url": "",
+    "kyc_provider_api_key": {
+        "dev": "",
+        "prod": ""
+    },
+    "kyc_provider_secret_key": {
+        "dev": "",
+        "prod": ""
+    },
+    "kyc_provider_base_url": {
+        "dev": "https://stationapi.veriff.com",
+        "prod": "https://stationapi.veriff.com"
+    },
+    "mnemonic_phrase": {
+        "dev": "",
+        "prod": ""
+    },
+    "chatbot_secret": {
+        "dev": "",
+        "prod": ""
+    },
+    "slack_bot_token": {
+        "dev": "",
+        "prod": ""
+    },
+    "default_chain_id": {
+        "dev": 97,
+        "prod": 56
+    },
+    "contracts": {
+        "dev": {
+            "BaseToken": {
+                "97": {
+                    "symbol": "",
+                    "decimals": 18,
+                    "address": ""
+                }
+            },
+            "PaymentToken": {
+                "97": {
+                    "symbol": "USDT",
+                    "decimals": 18,
+                    "address": "0x180dE5857c4351BfE4DC881EBfceE37E0DC14855"
+                }
+            },
+            "EventFactory": {
+                "97": ""
+            },
+            "FarmFactory": "",
+            "Router": "",
+            "Tiers": "",
+            "WalletStore": "",
+            "TierMigrator": ""
+        },
+        "prod": {
+            "BaseToken": {
+                "56": {
+                    "symbol": "",
+                    "decimals": 18,
+                    "address": ""
+                }
+            },
+            "PaymentToken": {
+                "56": {
+                    "symbol": "USDT",
+                    "decimals": 18,
+                    "address": "0x55d398326f99059fF775485246999027B3197955"
+                }
+            },
+            "EventFactory": {
+                "56": ""
+            },
+            "FarmFactory": "",
+            "Router": "",
+            "WalletStore": "",
+            "Tiers": "",
+            "TierMigrator": ""
+        }
+    },
+    "app_secret": {
+        "dev": "",
+        "prod": ""
+    },
+    "cognito_client_id": {
+        "dev": "",
+        "prod": ""
+    },
+    "cognito_pool_id": {
+        "dev": "",
+        "prod": ""
+    },
+    "db_config": {
+        "dev": {
+            "host": "",
+            "port": 5432,
+            "username": "postgres",
+            "password": "",
+            "database": "dev"
+        },
+        "prod": {
+            "host": "",
+            "port": 5432,
+            "username": "postgres",
+            "password": "",
+            "database": "prod"
+        }
+    },
+    "contract_deployer_queue": {
+        "dev": "",
+        "prod": ""
+    }
+}
