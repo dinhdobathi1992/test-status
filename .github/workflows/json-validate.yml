@@ -1,0 +1,93 @@
+name: Validate JSON
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+
+
+jobs:
+  get-approvals:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+    - name: Setup NodeJS 18
+      uses: actions/setup-node@v2
+      with:
+        node-version: 18.x
+
+    - name: Show NodeJS version
+      run: npm --version
+
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "::set-output name=dir::$(yarn cache dir)"
+
+    - uses: actions/cache@v3
+      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile --prefer-offline
+
+    - name: Generate a token
+      id: generate_token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ secrets.APP_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+        
+    - name: Check for file changes & validate json inside file
+      id: file_changed
+      run: |
+        base_branch="main"  # Replace with the base branch name
+        changed_files=$(git diff --name-only origin/main HEAD )
+
+        echo "Changed files:"
+        echo "$changed_files"
+
+        echo "::set-output name=changed_files::$changed_files"
+        
+    - name: Validate Changed files
+      id: validate_files
+      shell: bash
+      env:
+        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        CHANGED_FILES: ${{ steps.file_changed.outputs.changed_files }}
+      if: ${{ contains(steps.file_changed.outputs.changed_files, '.env.') }}
+      run: |
+        echo "Validating files"
+        echo "Changed files: $CHANGED_FILES"
+        while IFS= read -r file; do
+        # Get the file extension
+        extension="${file##*.}"
+
+        # Check if the file has a ".preview" or ".production" extension
+        if [ "$extension" == "local" ] || [ "$extension" == "production" ]; then
+            # Append the file to the filtered_files variable
+            filtered_files+="$file"$'\n'
+        fi
+          done <<< "$CHANGED_FILES"
+        for file in $filtered_files; do
+          echo "Validating file: $file"
+          node .github/scripts/validatejson.js $file || exit 1
+        done
+
+    - name: Comment 
+      if: ${{ contains(steps.file_changed.outputs.changed_files, '.env.production') }}
+      env:
+        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+      run: |
+          echo "Commenting on PR"
+          # gh api \
+          # --method POST \
+          #   -H "Accept: application/vnd.github+json" \
+          #   -H "X-GitHub-Api-Version: 2022-11-28" \
+          #   https://api.github.com/repos/Decubate-com/env-management/issues/${{ github.event.pull_request.number }}/comments \
+          #   -f body='Your PR was approved - You are good to go '
