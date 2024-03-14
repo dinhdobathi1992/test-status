@@ -22,17 +22,28 @@ const logAwsProfile = () => {
   console.log('Please press enter to continue');
 };
 
-const waitForEnter = (
-  promise // wait for the user to hit Enter
-) =>
-  rl.question('', async () => {
-    // User has hit Enter
-    await promise();
+// const waitForEnter = (
+//   promise // wait for the user to hit Enter
+// ) =>
+//   rl.question('', async () => {
+//     // User has hit Enter
+//     await promise();
 
-    // close the readline interface
+//     // close the readline interface
+//     rl.close();
+
+//     process.exit();
+//   });
+
+//new function
+const waitForEnter = (promise) => {
+  console.log('Automatically proceeding...');
+  promise().then(() => {
     rl.close();
-
     process.exit();
   });
+};
+
+//
 
 module.exports = { delay, logAwsProfile, waitForEnter };
