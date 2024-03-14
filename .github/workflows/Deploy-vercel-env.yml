@@ -66,4 +66,9 @@ jobs:
             echo $PRIVATE_KEY > private.pem
             cat private.pem
             node .github/scripts/decrypt-jsonfile.js
+
+            echo "OUTPUT TESTING"
+            cat aws/example/decrypted_data.json
+            echo "updating params"
+            AWS_PROFILE=staging node .github/scripts/set-env-params.js  aws/example/decrypted_data.json   
             
