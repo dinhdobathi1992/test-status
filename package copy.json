@@ -1,8 +1,20 @@
 {
-  "name": "env-management",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
+  "name": "graphql-backend",
+  "version": "2.34.1",
+  "description": "Decubate Serverless Functions",
+  "main": "handler.js",
+  "scripts": {
+    "commit": "yarn test && yarn prettier && yarn lint:fix && git-cz",
+    "start": "sls offline",
+    "lint": "eslint \"**/*.ts\"",
+    "lint:fix": "eslint \"**/*.ts\" --fix",
+    "prettier": "prettier --write \"**/*.ts\"",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "semantic-release": "semantic-release"
+  },
+  "author": "Aaron Fitzpatrick <a.fitzy98@gmail.com>",
+  "license": "ISC",
   "dependencies": {
     "@aws-sdk/client-cloudformation": "^3.526.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.490.0",
@@ -66,5 +78,31 @@
     "typescript": "^5.0.0",
     "webpack": "^5.84.1",
     "webpack-node-externals": "^3.0.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/git-cz"
+    }
+  },
+  "repository": "https://github.com/Decubate-com/graphql-backend.git",
+  "release": {
+    "plugins": [
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
+      "@semantic-release/github",
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/git",
+        {
+          "assets": "package.json",
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ]
   }
 }

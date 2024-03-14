@@ -4,3 +4,4 @@
 merged-check.yml
 pr-closed.json
 *.pem
+node_modules/
