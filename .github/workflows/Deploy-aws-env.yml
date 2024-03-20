@@ -87,7 +87,7 @@ jobs:
 
       - uses: Fooji/create-aws-profile-action@v1
         with:
-          profile: ${{ steps.List-Changed-Files.outputs.CLIENT_NAME }}
+          profile: ${{ steps.list_file_changed.outputs.CLIENT_NAME }}
           region: ap-southeast-1
           key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
