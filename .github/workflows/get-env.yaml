@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v1
-      - name: Generate a token
+      - name: Generate a tokene
         id: generate_token
         uses: actions/create-github-app-token@v1
         with:
@@ -24,7 +24,7 @@ jobs:
           echo $client_name
           echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
           ls -ls aws/example
-          echo "::set-output name=env::$$(dirname "$file" | awk -F/ '{print $NF}')"
+          echo "::set-output name=env::$client_name"
 
       - name: Run tests
         uses: mathiasvr/command-output@v1
