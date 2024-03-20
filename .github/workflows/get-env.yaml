@@ -4,6 +4,8 @@ jobs:
   get-env-output:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
       - name: Generate a token
         id: generate_token
         uses: actions/create-github-app-token@v1
