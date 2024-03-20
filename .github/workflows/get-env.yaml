@@ -1,17 +1,28 @@
 on:
   workflow_dispatch:
 jobs:
-  get-env-output:
+  generate-projects:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - id: set-matrix
+        name: Select projects for Deployment
+        run: |
+          file="aws/example/be-env-cfg.dcbencrypted"
+          projects=$(dirname "$file" | awk -F/ '{print $NF}')
+          echo ::set-output name=matrix::{\"include\":$(echo $projects)}\"
+  get-env-output:
+    name: Deploy ${{ matrix.project }}
+    needs: generate-projects
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.generate-projects.outputs.matrix)}}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v1
-      - name: Generate a tokene
-        id: generate_token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: list file changed
         id: list_file_changed
         shell: bash
@@ -19,6 +30,7 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
         run: |
+          
           file="aws/example/be-env-cfg.dcbencrypted"
           client_name=$(dirname "$file" | awk -F/ '{print $NF}')
           echo $client_name
@@ -32,9 +44,12 @@ jobs:
         env:
             ENV: ${{ steps.list_file_changed.outputs.env }}
             SELECTED_COLOR: ${{ steps.list_file_changed.outputs.SELECTED_COLOR }}
+            AWS_ACCESS_KEY_ID_EXAMPLE: ${{ secrets[format('AWS_ACCESS_KEY_ID_{0}', env.ENV)] }}
+            AWS_SECRET_ACCESS_KEY_EXAMPLE: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.ENV)] }}
         with:
           run: |
               echo $ENV
               echo $SELECTED_COLOR
-      
+              echo $AWS_ACCESS_KEY_ID_EXAMPLE
+              echo $AWS_SECRET_ACCESS_KEY_EXAMPLE
                 
