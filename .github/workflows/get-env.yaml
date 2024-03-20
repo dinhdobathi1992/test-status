@@ -13,6 +13,7 @@ jobs:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
       - name: list file changed
+        id: list_file_changed
         shell: bash
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -20,6 +21,8 @@ jobs:
         run: |
           file="aws/example/be-env-cfg.dcbencrypted"
           client_name=$(dirname "$file" | awk -F/ '{print $NF}')
+          echo $client_name
+          echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
           ls -ls aws/example
           echo "::set-output name=env::$$(dirname "$file" | awk -F/ '{print $NF}')"
 
@@ -27,9 +30,11 @@ jobs:
         uses: mathiasvr/command-output@v1
         id: tests
         env:
-            ENV: ${{ steps.list-file-changed.outputs.env }}
+            ENV: ${{ steps.list_file_changed.outputs.env }}
+            SELECTED_COLOR: ${{ steps.list_file_changed.outputs.SELECTED_COLOR }}
         with:
           run: |
               echo $ENV
+              echo $SELECTED_COLOR
       
                 
