@@ -81,7 +81,7 @@ jobs:
             echo "Client name : $client_name"
             echo "client_name=$client_name" >> "$GITHUB_OUTPUT"
             echo "CLIENT_NAME=$client_name" >> "$GITHUB_OUTPUT"
-
+            echo '::set-output name=CLIENT_NAME::$client_name'
           done
 
       - uses: Fooji/create-aws-profile-action@v1
