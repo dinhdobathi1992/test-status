@@ -12,11 +12,24 @@ jobs:
         with:
           app-id: ${{ secrets.APP_ID }}
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
-      - name: List-Changed-Files
+      - name: list file changed
         shell: bash
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
         run: |
+          file="aws/example/be-env-cfg.dcbencrypted"
+          client_name=$(dirname "$file" | awk -F/ '{print $NF}')
+          ls -ls aws/example
+          echo "::set-output name=env::$$(dirname "$file" | awk -F/ '{print $NF}')"
 
-          ls -ls aws/
+      - name: Run tests
+        uses: mathiasvr/command-output@v1
+        id: tests
+        env:
+            ENV: ${{ steps.list-file-changed.outputs.env }}
+        with:
+          run: |
+              echo $ENV
+      
+                
