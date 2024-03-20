@@ -80,21 +80,23 @@ jobs:
             client_name=$(dirname "$file" | awk -F/ '{print $NF}')
             echo "Client name : $client_name"
             echo "client_name=$client_name" >> "$GITHUB_OUTPUT"
+            echo "CLIENT_NAME=$client_name" >> "$GITHUB_OUTPUT"
 
           done
 
       - uses: Fooji/create-aws-profile-action@v1
         with:
-          profile: ${{ steps.List-Changed-Files.outputs.client_name }}
+          profile: ${{ steps.List-Changed-Files.outputs.CLIENT_NAME }}
           region: ap-southeast-1
           key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           secret: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: get caller identity1
         env:
-          profile: ${{ steps.List-Changed-Files.outputs.client_name }}
+          PROFILE: ${{ steps.List-Changed-Files.outputs.CLIENT_NAME }}
         run: |
-          aws sts get-caller-identity --profile $profile
+          echo "Profile: $PROFILE"
+          aws sts get-caller-identity --profile $PROFILE
 
       # - name: Update
       #   shell: bash
