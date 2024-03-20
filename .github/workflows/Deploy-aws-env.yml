@@ -38,6 +38,7 @@ jobs:
         run: yarn install --frozen-lockfile --prefer-offline
 
       - name: List-Changed-Files
+        id: list_file_changed
         shell: bash
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -81,7 +82,7 @@ jobs:
             echo "Client name : $client_name"
             echo "client_name=$client_name" >> "$GITHUB_OUTPUT"
             echo "CLIENT_NAME=$client_name" >> "$GITHUB_OUTPUT"
-            echo '::set-output name=CLIENT_NAME::$client_name'
+            echo "::set-output name=env::$client_name"
           done
 
       - uses: Fooji/create-aws-profile-action@v1
@@ -93,9 +94,11 @@ jobs:
 
       - name: get caller identity1
         env:
-          PROFILE: ${{ steps.List-Changed-Files.outputs.CLIENT_NAME }}
+          PROFILE: ${{ steps.list_file_changed.outputs.CLIENT_NAME }}
+          ENV: ${{ steps.list_file_changed.outputs.env }}
         run: |
           echo "Profile: $PROFILE"
+          echo "ENV: $ENV"
           aws sts get-caller-identity --profile $PROFILE
 
       # - name: Update
