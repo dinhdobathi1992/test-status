@@ -18,6 +18,7 @@ jobs:
           echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
           ls -ls aws/example
           echo "::set-output name=env::$client_name"
+          echo "PROFILE=$client_name" >> $GITHUB_ENV
 
       - name: Run tests
         uses: mathiasvr/command-output@v1
@@ -26,12 +27,12 @@ jobs:
             TEST: ${{ vars.AWS_ACCESS_KEY_ID_EXAMPLE }}
             ENV: ${{ steps.list_file_changed.outputs.env }}
             SELECTED_COLOR: ${{ steps.list_file_changed.outputs.SELECTED_COLOR }}
-            AWS_ACCESS_KEY_ID: ${{ secrets[format('AWS_ACCESS_KEY_ID_{0}', ${{ steps.list_file_changed.outputs.env }} )] }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', ${{ steps.list_file_changed.outputs.env }} )] }}
+            AWS_ACCESS_KEY_ID: ${{ secrets[format('AWS_ACCESS_KEY_ID_{0}', env.PROFILE )] }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.PROFILE }} )] }}
         with: 
           run: |
               echo $TEST
-              echo ${{ env.ENV }}
+              echo ${{ env.PROFILE }}
               echo $AWS_ACCESS_KEY_ID
               echo $ENV
               echo $SELECTED_COLOR
