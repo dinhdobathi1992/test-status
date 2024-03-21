@@ -69,12 +69,13 @@ jobs:
         shell: bash
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          PROFILE: ${{ env.PROFILE }}
         run: |
             echo $PRIVATE_KEY > private.pem
             cat private.pem
-            node .github/scripts/decrypt-jsonfile.js
+            node .github/scripts/decrypt-jsonfile.js $PROFILE aws/$PROFILE/be-env-cfg.dcbencrypted
 
             echo "OUTPUT TESTING"
-            cat aws/example/decrypted_data.json
+            cat aws/$PROFILE/decrypted_data.json
             echo "updating params"
-            AWS_PROFILE=staging node .github/scripts/set-env-params.js  aws/example/decrypted_data.json
+            AWS_PROFILE=$PROFILE node .github/scripts/set-env-params.js  aws/$PROFILE/decrypted_data.json
