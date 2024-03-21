@@ -15,7 +15,6 @@ on:
 jobs:
   update-aws-cfg:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v1
