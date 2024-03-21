@@ -65,18 +65,16 @@ jobs:
           echo "ENV: $PROFILE"
           aws sts get-caller-identity --profile $PROFILE
 
-      # - name: Update
-      #   shell: bash
-      #   env:
-      #     VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      #     VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      #     PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-      #   run: |
-      #       echo $PRIVATE_KEY > private.pem
-      #       cat private.pem
-      #       node .github/scripts/decrypt-jsonfile.js
+      - name: Update AWS Params
+        shell: bash
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        run: |
+            echo $PRIVATE_KEY > private.pem
+            cat private.pem
+            node .github/scripts/decrypt-jsonfile.js
 
-      #       echo "OUTPUT TESTING"
-      #       cat aws/example/decrypted_data.json
-      #       echo "updating params"
-      #       AWS_PROFILE=staging node .github/scripts/set-env-params.js  aws/example/decrypted_data.json
+            echo "OUTPUT TESTING"
+            cat aws/example/decrypted_data.json
+            echo "updating params"
+            AWS_PROFILE=staging node .github/scripts/set-env-params.js  aws/example/decrypted_data.json
