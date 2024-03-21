@@ -36,6 +36,5 @@ jobs:
               echo $AWS_ACCESS_KEY_ID
               echo $ENV
               echo $SELECTED_COLOR
-              echo $AWS_ACCESS_KEY_ID_EXAMPLE
-              echo $AWS_SECRET_ACCESS_KEY_EXAMPLE
+              echo $AWS_SECRET_ACCESS_KEY
                 
