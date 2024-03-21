@@ -73,6 +73,8 @@ jobs:
         run: |
             echo $PRIVATE_KEY > private.pem
             cat private.pem
+            ls -la
+            ls -la aws/$PROFILE
             node .github/scripts/decrypt-jsonfile.js $PROFILE aws/$PROFILE/be-env-cfg.dcbencrypted
 
             echo "OUTPUT TESTING"
