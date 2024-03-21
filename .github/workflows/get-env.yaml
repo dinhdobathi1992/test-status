@@ -16,7 +16,6 @@ jobs:
           echo ::set-output name=matrix::{\"include\":$(echo $projects)}\"
   get-env-output:
     name: Deploy ${{ matrix.project }}
-    needs: generate-projects
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{fromJson(needs.generate-projects.outputs.matrix)}}
