@@ -26,7 +26,7 @@ jobs:
             TEST: ${{ vars.AWS_ACCESS_KEY_ID_EXAMPLE }}
             ENV: ${{ steps.list_file_changed.outputs.env }}
             SELECTED_COLOR: ${{ steps.list_file_changed.outputs.SELECTED_COLOR }}
-            AWS_ACCESS_KEY_ID: ${{ secrets[format('AWS_ACCESS_KEY_ID_{0}', env.ENV)] }}
+            AWS_ACCESS_KEY_ID: ${{ var[format('AWS_ACCESS_KEY_ID_{0}', env.ENV)] }}
             AWS_SECRET_ACCESS_KEY_EXAMPLE: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.ENV)] }}
         with:
           run: |
