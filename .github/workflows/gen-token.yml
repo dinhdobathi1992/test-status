@@ -37,7 +37,9 @@ jobs:
           echo ${{ github.event.inputs.resumeUrl }} 
       - name: Resume n8n Workflow
         run: |
+          echo "RUN_ID=$GITHUB_RUN_ID"
           curl -X POST "${{ inputs.resumeUrl }}" \
                -H "Content-Type: application/json" \
-               -d '{"status": "resumed by GitHub"}'
+               -d '{"status": "resumed by GitHub", "run_id": "'"${{ github.run_id }}"'"}'
+
 
