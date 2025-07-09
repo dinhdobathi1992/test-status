@@ -1,9 +1,9 @@
 on:
   workflow_dispatch:
-    input:
+    inputs:
       resumeUrl:
         type: string
-        require: true
+        required: true
         description: url for n8n
 jobs:
   demo_app_authentication:
