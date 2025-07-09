@@ -33,3 +33,12 @@ jobs:
            -f start_side='RIGHT' \
            -F line=2 \
            -f side='RIGHT' 
+          ###
+          echo ${{ github.event.inputs.resumeUrl }} 
+          - name: Resume n8n Workflow
+      - name: Resume n8n Workflow
+        run: |
+          curl -X POST "${{ inputs.resumeUrl }}" \
+               -H "Content-Type: application/json" \
+               -d '{"status": "resumed by GitHub"}'
+
