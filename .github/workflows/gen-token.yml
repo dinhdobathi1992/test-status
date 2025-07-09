@@ -1,5 +1,10 @@
 on:
   workflow_dispatch:
+    input:
+      resumeUrl:
+        type: string
+        require: true
+        description: url for n8n
 jobs:
   demo_app_authentication:
     runs-on: ubuntu-latest
